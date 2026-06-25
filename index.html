@@ -350,6 +350,21 @@ section{position:relative;z-index:2}
 .whatsapp-btn:hover{background:#1e3d2a;transform:translateY(-3px);box-shadow:0 8px 25px rgba(45,90,61,0.3)}
 .contact-note{font-family:'Caveat',cursive;font-size:1rem;color:var(--brown);margin-top:1.5rem;line-height:1.6;background:#f5efe3;padding:1.2rem;border:1px dashed rgba(139,106,78,0.3);display:inline-block;transform:rotate(-0.5deg)}
 
+/* Form Styles */
+.contact-form-group{margin-bottom:1.2rem;text-align:left}
+.contact-form-group label{display:block;font-family:'Caveat',cursive;font-size:1.05rem;color:var(--brown);margin-bottom:0.4rem}
+.contact-form-group input,
+.contact-form-group select,
+.contact-form-group textarea{width:100%;padding:0.85rem 1rem;border:1px solid rgba(139,106,78,0.25);border-radius:4px;background:#f5efe3;font-family:'Inter',sans-serif;font-size:0.9rem;color:var(--text);outline:none;transition:border-color 0.3s,box-shadow 0.3s}
+.contact-form-group input:focus,
+.contact-form-group select:focus,
+.contact-form-group textarea:focus{border-color:var(--rose);box-shadow:0 0 0 3px rgba(176,122,114,0.1)}
+.contact-form-group input::placeholder,
+.contact-form-group textarea::placeholder{color:rgba(78,64,55,0.5)}
+.contact-form-group select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238B6A4E' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.5rem}
+.contact-form-group textarea{resize:vertical;min-height:100px}
+#whatsappForm button[type="submit"]{margin-top:0.5rem}
+
 .section-title,.banner-text h2,.book-cover-title{display:inline-block;clip-path:inset(0 101% 0 0)}
 .reveal.visible .section-title,.reveal.visible .banner-text h2,.reveal.visible .book-cover-title{animation:inkReveal 1.15s cubic-bezier(0.65,0,0.35,1) 0.18s both}
 
@@ -430,15 +445,22 @@ footer{background:var(--ink);color:var(--cream);padding:3rem 5vw;text-align:cent
   .banner-text h2{font-size:1.5rem}
   .banner-text{bottom:1.5rem}
 
-  /* journey mobile: single column */
+  /* journey mobile: single column - consistent layout */
   .journey-spine{display:none}
   .journey-steps{gap:0}
   .jstep{
     display:flex;flex-direction:column;align-items:center;
-    margin-bottom:2rem;gap:0.8rem;
+    margin-bottom:2.5rem;gap:1rem;
   }
-  .jcard{width:100%;max-width:380px}
-  .jspacer{display:none}
+  .jstep.left, .jstep.right {
+    /* Override the desktop grid for consistent mobile layout */
+    display:flex;
+    flex-direction:column;
+  }
+  /* Ensure consistent order: number first, then card */
+  .jstep .jnum {order:1; margin-bottom:0.8rem;}
+  .jstep .jcard {order:2; width:100%;max-width:380px}
+  .jstep .jspacer {display:none}
   .jarrow{display:none}
 
   .journey-stats{gap:1.2rem;margin-top:2.5rem;padding-top:2rem}
@@ -471,10 +493,9 @@ footer{background:var(--ink);color:var(--cream);padding:3rem 5vw;text-align:cent
 <div id="particles"></div>
 <div class="scroll-bookmark" id="scrollBookmark"></div>
 
-<button class="music-toggle" id="musicToggle" aria-label="Toggle ambient music" title="Soft ambient music">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" id="musicIconNote"><path d="M9 18V5l12-2v13" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-  <span class="music-bars" id="musicBars" style="display:none"><span class="bar"></span><span class="bar"></span><span class="bar"></span></span>
-</button>
+<a href="#contact" class="music-toggle" id="whatsappToggle" aria-label="Begin Your Story" title="Click to start your story">
+  <svg viewBox="0 0 24 24" fill="currentColor" id="whatsappIcon"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
 
 <!-- NAV -->
 <nav>
@@ -1017,14 +1038,86 @@ footer{background:var(--ink);color:var(--cream);padding:3rem 5vw;text-align:cent
     <span class="section-number">~ Begin Here ~</span>
     <h2 class="section-title" style="margin-bottom:1rem">Begin <em>Your Story</em></h2>
     <p class="section-subtitle">Every extraordinary gift starts with a conversation. Tell us who you love. We'll take it from there.</p>
-    <a href="https://wa.me/919999999999?text=Hello%20Mr%20Moments%20Remind%2C%20I%20would%20like%20to%20create%20a%20special%20gift..." class="whatsapp-btn" target="_blank">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0">
-        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-      </svg>
-      Chat With Us On WhatsApp
-    </a>
-    <div class="contact-note">
-      ✉️ We respond within a few hours.<br>
+
+    <!-- WhatsApp Contact Form -->
+    <form id="whatsappForm" style="max-width:500px;margin:2rem auto;text-align:left">
+      <div class="contact-form-group">
+        <label>Your Name *</label>
+        <input type="text" id="senderName" required placeholder="Enter your name">
+      </div>
+
+      <div class="contact-form-group">
+        <label>Occasion *</label>
+        <select id="occasion" required>
+          <option value="">Select an occasion</option>
+          <option value="Birthday">🎂 Birthday</option>
+          <option value="Anniversary">💕 Anniversary</option>
+          <option value="Wedding">💒 Wedding</option>
+          <option value="Proposal">💍 Proposal</option>
+          <option value="Valentine's Day">💘 Valentine's Day</option>
+          <option value="Mother's Day">🌸 Mother's Day</option>
+          <option value="Father's Day">👨 Father's Day</option>
+          <option value="Friendship Day">🤝 Friendship Day</option>
+          <option value="Graduation">🎓 Graduation</option>
+          <option value="Baby Shower">🍼 Baby Shower</option>
+          <option value="Housewarming">🏠 Housewarming</option>
+          <option value="Just Because">💝 Just Because</option>
+          <option value="Other">✨ Other</option>
+        </select>
+      </div>
+
+      <div class="contact-form-group">
+        <label>Tell Us Your Story *</label>
+        <textarea id="message" required rows="4" placeholder="Tell us about the person, your relationship, any special memories you'd like to include..."></textarea>
+      </div>
+
+      <div class="contact-form-group">
+        <label>Budget Range (Optional)</label>
+        <select id="budget">
+          <option value="">Select budget range</option>
+          <option value="Below ₹1,000">Below ₹1,000</option>
+          <option value="₹1,000 - ₹2,500">₹1,000 - ₹2,500</option>
+          <option value="₹2,500 - ₹5,000">₹2,500 - ₹5,000</option>
+          <option value="₹5,000 - ₹10,000">₹5,000 - ₹10,000</option>
+          <option value="Above ₹10,000">Above ₹10,000</option>
+        </select>
+      </div>
+
+      <button type="submit" class="whatsapp-btn" style="width:100%;justify-content:center">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        Send Message on WhatsApp
+      </button>
+    </form>
+
+    <script>
+    document.getElementById('whatsappForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('senderName').value;
+      const occasion = document.getElementById('occasion').value;
+      const message = document.getElementById('message').value;
+      const budget = document.getElementById('budget').value;
+
+      let whatsappText = `Hello Mr Moments Remind! 👋%0A%0A`;
+      whatsappText += `*Name:* ${name}%0A`;
+      whatsappText += `*Occasion:* ${occasion}%0A`;
+      if (budget) {
+        whatsappText += `*Budget:* ${budget}%0A`;
+      }
+      whatsappText += `%0A*My Story:*%0A${message}%0A`;
+      whatsappText += `%0AI'm excited to create something beautiful together! ✨`;
+
+      const phoneNumber = '919999999999'; // Replace with your actual WhatsApp number
+      const whatsappURL = `https://wa.me/${phoneNumber}?text=${whatsappText}`;
+
+      window.open(whatsappURL, '_blank');
+    });
+    </script>
+
+    <div class="contact-note" style="margin-top:2rem">
+      ✉️ Prefer email? Write to us at <a href="mailto:hello@mr momentsremind.com" style="color:var(--rose);text-decoration:none">hello@mrmomentsremind.com</a><br>
       Orders take 5–10 working days to handcraft.<br>
       Pan-India delivery available.
     </div>
