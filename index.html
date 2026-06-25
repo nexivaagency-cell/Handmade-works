@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mr Moments Remind — Not Just Gifts. Emotions Wrapped In Art.</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&family=Caveat:wght@400;500;600&family=La+Belle+Aurore&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --cream:#F8F4EE;--aged:#EFE7DA;--beige:#D8C1A0;--brown:#8B6A4E;
+  --ink:#4E4037;--blush:#E9D1CB;--rose:#B07A72;--text:#2C2623;
+  --shadow:rgba(44,38,35,0.15);
+  --gold:#A8843F;
+}
+html{scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important}
+}
+body{background-color:var(--cream);color:var(--text);font-family:'Inter',sans-serif;overflow-x:hidden;cursor:default}
+body.menu-open{overflow:hidden}
+
+/* shared keyframes for ambient/floating motion */
+@keyframes itemFloat{0%,100%{transform:var(--r,rotate(0deg)) translateY(0)}50%{transform:var(--r,rotate(0deg)) translateY(-9px)}}
+@keyframes itemFloatSm{0%,100%{transform:var(--r,rotate(0deg)) translateY(0)}50%{transform:var(--r,rotate(0deg)) translateY(-5px)}}
+@keyframes sealBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes inkReveal{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes scrapbookEntrance{
+  0%{opacity:0;transform:rotate(-9deg) translateY(160px) scale(0.92)}
+  60%{opacity:1;transform:rotate(1.5deg) translateY(-10px) scale(1.01)}
+  80%{transform:rotate(-2deg) translateY(4px) scale(1)}
+  100%{opacity:1;transform:rotate(-1deg) translateY(0) scale(1)}
+}
+@keyframes deskItemEntrance{from{opacity:0;transform:translateY(40px) scale(0.85)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes driftDown{0%{opacity:0;transform:translateY(-10px) rotate(0deg)}10%{opacity:0.7}90%{opacity:0.3}100%{opacity:0;transform:translateY(100vh) rotate(160deg)}}
+
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity:0.6;
+}
+
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:1rem 3rem;display:flex;justify-content:space-between;align-items:center;
+  background:rgba(248,244,238,0.92);backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(139,106,78,0.15);
+}
+.nav-brand{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:500;color:var(--ink);letter-spacing:0.05em}
+.nav-links{display:flex;gap:2.5rem;list-style:none}
+.nav-links a{font-family:'Inter',sans-serif;font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--brown);text-decoration:none;transition:color 0.3s}
+.nav-links a:hover{color:var(--rose)}
+.nav-cta{background:var(--brown);color:var(--cream);padding:0.55rem 1.4rem;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.3s}
+.nav-cta:hover{background:var(--ink)}
+
+/* HAMBURGER (mobile) */
+.nav-burger{display:none;flex-direction:column;justify-content:center;gap:5px;width:32px;height:32px;background:none;border:none;cursor:pointer;padding:0;z-index:210}
+.nav-burger span{display:block;width:100%;height:2px;background:var(--ink);border-radius:1px;transition:transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94),opacity 0.3s}
+.nav-burger.active span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-burger.active span:nth-child(2){opacity:0}
+.nav-burger.active span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* MOBILE MENU OVERLAY — paper page sliding in */
+.mobile-menu{
+  position:fixed;top:0;right:0;height:100vh;width:min(78vw,330px);z-index:200;
+  background:var(--aged);
+  box-shadow:-6px 0 30px rgba(44,38,35,0.3);
+  transform:translateX(100%);transition:transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94);
+  padding:6rem 2.2rem 2.5rem;display:flex;flex-direction:column;
+  border-left:1px solid rgba(139,106,78,0.2);
+}
+.mobile-menu::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;opacity:0.6}
+.mobile-menu.active{transform:translateX(0)}
+.mobile-menu-backdrop{position:fixed;inset:0;background:rgba(44,38,35,0.45);z-index:190;opacity:0;pointer-events:none;transition:opacity 0.4s}
+.mobile-menu-backdrop.active{opacity:1;pointer-events:auto}
+.mobile-menu-links{list-style:none;display:flex;flex-direction:column;gap:1.6rem;position:relative;z-index:2}
+.mobile-menu-links a{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--ink);text-decoration:none;font-weight:400;display:inline-block;opacity:0;transform:translateX(18px);transition:opacity 0.45s,transform 0.45s}
+.mobile-menu.active .mobile-menu-links a{opacity:1;transform:translateX(0)}
+.mobile-menu.active .mobile-menu-links a:nth-child(1){transition-delay:0.12s}
+.mobile-menu.active .mobile-menu-links a:nth-child(2){transition-delay:0.18s}
+.mobile-menu.active .mobile-menu-links a:nth-child(3){transition-delay:0.24s}
+.mobile-menu.active .mobile-menu-links a:nth-child(4){transition-delay:0.3s}
+.mobile-menu.active .mobile-menu-links a:nth-child(5){transition-delay:0.36s}
+.mobile-menu-tag{font-family:'Caveat',cursive;font-size:1.05rem;color:var(--rose);margin-bottom:2.2rem;position:relative;z-index:2}
+.mobile-menu .nav-cta{margin-top:2rem;align-self:flex-start;position:relative;z-index:2}
+
+/* SCROLL PROGRESS — vintage ribbon bookmark */
+.scroll-bookmark{
+  position:fixed;top:0;right:18px;width:14px;z-index:150;
+  height:46px;pointer-events:none;
+  background:linear-gradient(180deg,var(--rose),var(--brown));
+  clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%);
+  box-shadow:0 2px 8px rgba(44,38,35,0.25);
+  transform-origin:top center;
+  transition:height 0.1s linear;
+}
+@media(max-width:900px){.scroll-bookmark{display:none}}
+
+/* MUSIC TOGGLE */
+.music-toggle{
+  position:fixed;bottom:22px;left:22px;z-index:150;
+  width:46px;height:46px;border-radius:50%;border:1px solid rgba(139,106,78,0.3);
+  background:rgba(248,244,238,0.92);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 3px 12px rgba(44,38,35,0.18);transition:transform 0.3s,box-shadow 0.3s;
+}
+.music-toggle:hover{transform:scale(1.08);box-shadow:0 6px 18px rgba(44,38,35,0.25)}
+.music-toggle svg{width:20px;height:20px;color:var(--brown);transition:color 0.3s}
+.music-toggle.playing svg{color:var(--rose)}
+.music-toggle .bar{display:inline-block;width:2.5px;background:var(--brown);border-radius:1px;margin:0 1px}
+.music-bars{display:flex;align-items:center;height:18px;gap:2px}
+.music-bars .bar{animation:musicBar 0.9s ease-in-out infinite;animation-play-state:paused}
+.music-toggle.playing .music-bars .bar{animation-play-state:running}
+.music-bars .bar:nth-child(1){height:6px;animation-delay:0s}
+.music-bars .bar:nth-child(2){height:14px;animation-delay:0.2s}
+.music-bars .bar:nth-child(3){height:9px;animation-delay:0.4s}
+@keyframes musicBar{0%,100%{transform:scaleY(0.4)}50%{transform:scaleY(1.4)}}
+
+/* HERO */
+.hero{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;padding-top:5rem;
+}
+.hero-bg{
+  position:absolute;inset:0;z-index:0;
+  background-image:url('https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=1600&auto=format&fit=crop&q=80');
+  background-size:cover;background-position:center;
+  filter:sepia(0.4) brightness(0.82);
+}
+.hero-bg::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(248,244,238,0.72) 0%,rgba(239,231,218,0.55) 60%,rgba(44,38,35,0.25) 100%);
+}
+.desk{position:relative;width:min(1100px,95vw);min-height:85vh;display:flex;align-items:center;justify-content:center;z-index:2}
+
+.scrapbook{
+  position:relative;width:540px;background:rgba(239,231,218,0.96);
+  border-radius:2px;
+  box-shadow:0 4px 12px var(--shadow),0 20px 60px rgba(44,38,35,0.22),inset 0 0 40px rgba(139,106,78,0.06);
+  transform:rotate(-1deg);z-index:5;
+  animation:scrapbookEntrance 1.4s cubic-bezier(0.16,0.84,0.44,1) both;
+  transition:box-shadow 0.6s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+.scrapbook:hover{box-shadow:0 12px 40px rgba(44,38,35,0.25),0 30px 80px rgba(44,38,35,0.18)}
+.scrapbook-spine{position:absolute;left:0;top:0;bottom:0;width:22px;background:linear-gradient(90deg,#7a5d45 0%,#8B6A4E 100%);border-radius:2px 0 0 2px}
+.scrapbook-spine::after{content:'';position:absolute;top:30px;bottom:30px;left:8px;right:8px;background:repeating-linear-gradient(180deg,rgba(255,255,255,0.1) 0,rgba(255,255,255,0.1) 2px,transparent 2px,transparent 10px)}
+.scrapbook-body{padding:2.5rem 2.5rem 2.5rem 3rem}
+.scrapbook-tape{position:absolute;top:-10px;left:50%;transform:translateX(-50%) rotate(-2deg);width:80px;height:24px;background:rgba(216,193,160,0.7);border:1px solid rgba(139,106,78,0.2);border-radius:2px}
+.scrapbook-tape::before{content:'';position:absolute;inset:3px;background:repeating-linear-gradient(90deg,rgba(139,106,78,0.08) 0,rgba(139,106,78,0.08) 2px,transparent 2px,transparent 6px)}
+.brand-label{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:300;color:var(--ink);line-height:1.1;letter-spacing:0.02em}
+.brand-label em{font-style:italic;color:var(--rose)}
+.tagline-label{font-family:'Caveat',cursive;font-size:1.1rem;color:var(--brown);margin-top:0.8rem;line-height:1.4}
+.scrapbook-divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--beige),transparent);margin:1.2rem 0}
+
+.desk-item{
+  position:absolute;opacity:0;
+  transition:box-shadow 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+  animation:deskItemEntrance 0.9s cubic-bezier(0.16,0.84,0.44,1) var(--d1,0.2s) forwards,
+            itemFloat 6s ease-in-out var(--d2,1.1s) infinite;
+}
+.desk-parallax{position:absolute;inset:0;will-change:transform}
+
+/* POLAROIDS with real images */
+.polaroid{background:#fff;padding:10px 10px 28px;box-shadow:0 3px 12px rgba(44,38,35,0.25),0 1px 3px rgba(44,38,35,0.12);font-family:'Caveat',cursive;font-size:0.85rem;color:var(--brown);text-align:center}
+.polaroid-img{width:100%;aspect-ratio:1;overflow:hidden;display:block}
+.polaroid-img img{width:100%;height:100%;object-fit:cover;display:block;filter:sepia(0.2) contrast(1.05)}
+.polaroid-caption{margin-top:6px}
+.polaroid-1{--r:rotate(6deg);width:120px;top:8%;left:3%;z-index:4}
+.polaroid-1:hover{animation:none;transform:rotate(2deg) scale(1.06);z-index:10;box-shadow:0 14px 34px rgba(44,38,35,0.3)}
+.polaroid-2{--r:rotate(-8deg);width:110px;bottom:12%;left:5%;z-index:3;animation-duration:0.9s,7s;animation-delay:var(--d1,0.35s),var(--d2,1.3s)}
+.polaroid-2:hover{animation:none;transform:rotate(-3deg) scale(1.06);z-index:10;box-shadow:0 14px 34px rgba(44,38,35,0.3)}
+.polaroid-3{--r:rotate(-5deg);width:115px;top:10%;right:4%;z-index:4;animation-duration:0.9s,6.6s;animation-delay:var(--d1,0.5s),var(--d2,1.5s)}
+.polaroid-3:hover{animation:none;transform:rotate(-1deg) scale(1.06);z-index:10;box-shadow:0 14px 34px rgba(44,38,35,0.3)}
+
+.envelope{width:100px;height:70px;background:var(--blush);position:relative;cursor:pointer;box-shadow:0 2px 8px rgba(44,38,35,0.18);overflow:hidden}
+.envelope::before{content:'';position:absolute;left:0;right:0;top:0;border-left:50px solid transparent;border-right:50px solid transparent;border-top:32px solid rgba(176,122,114,0.3);transition:border-top-color 0.3s}
+.envelope:hover{animation:none!important;transform:translateY(-4px) rotate(1deg)}
+.envelope:hover::before{border-top-color:rgba(176,122,114,0.5)}
+.env-seal{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);width:20px;height:20px;background:var(--rose);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.5rem;color:var(--cream)}
+.env-1{--r:rotate(5deg);bottom:20%;right:6%;z-index:6;animation-duration:0.9s,5.8s;animation-delay:var(--d1,0.65s),var(--d2,1.75s)}
+
+.flower-cluster{position:absolute;pointer-events:none;z-index:7}
+.flower-1{--r:rotate(15deg);top:2%;right:18%;animation-duration:0.9s,7.5s;animation-delay:var(--d1,0.15s),var(--d2,1.2s)}
+.flower-2{--r:rotate(-20deg);bottom:5%;left:18%;animation-duration:0.9s,8s;animation-delay:var(--d1,0.55s),var(--d2,1.6s)}
+.ribbon{position:absolute;width:60px;height:4px;background:var(--rose);border-radius:2px;box-shadow:0 1px 3px var(--shadow)}
+.ribbon-1{--r:rotate(-45deg);top:42%;left:1%;opacity:0.7}
+.ribbon-2{--r:rotate(-45deg) translateY(10px);top:50%;left:1%;opacity:0.5}
+.paperclip{position:absolute;width:12px;height:35px;border:2.5px solid var(--brown);border-radius:6px 6px 0 0;border-bottom:none;z-index:9}
+.paperclip::after{content:'';position:absolute;left:3px;top:4px;right:3px;bottom:-8px;border:2.5px solid var(--brown);border-radius:3px 3px 0 0;border-bottom:none}
+.clip-1{--r:rotate(-10deg);top:18%;left:26%}
+.wax-seal{width:44px;height:44px;background:radial-gradient(circle at 40% 40%,#c4857d,var(--rose));border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--cream);font-weight:500;box-shadow:0 2px 8px rgba(176,122,114,0.4),inset 0 1px 2px rgba(255,255,255,0.2);position:absolute;z-index:8}
+.seal-1{--r:rotate(12deg);bottom:25%;right:18%;animation-name:deskItemEntrance,sealBreathe;animation-duration:0.9s,3.4s;animation-delay:var(--d1,0.75s),1.7s;animation-timing-function:cubic-bezier(0.16,0.84,0.44,1),ease-in-out;animation-iteration-count:1,infinite;animation-fill-mode:forwards,none}
+.sticky-note{background:#f0e8d4;padding:1rem;box-shadow:0 3px 10px var(--shadow);font-family:'Caveat',cursive;font-size:0.9rem;color:var(--ink);line-height:1.6;position:absolute;z-index:6;border-bottom-right-radius:0}
+.sticky-note::after{content:'';position:absolute;bottom:0;right:0;width:0;height:0;border-left:15px solid transparent;border-bottom:15px solid var(--beige)}
+.note-1{--r:rotate(3deg);bottom:8%;right:22%;width:130px;animation-duration:0.9s,6.2s;animation-delay:var(--d1,0.85s),var(--d2,1.4s)}
+
+.hero-cta{display:flex;gap:1rem;margin-top:1.8rem;align-items:center;flex-wrap:wrap}
+.btn-primary{background:var(--ink);color:var(--cream);padding:0.8rem 2rem;font-family:'Cormorant Garamond',serif;font-size:1rem;letter-spacing:0.06em;border:none;cursor:pointer;transition:all 0.3s;font-weight:500}
+.btn-primary:hover{background:var(--rose);transform:translateY(-2px)}
+.btn-ghost{background:transparent;color:var(--brown);padding:0.8rem 2rem;font-family:'Cormorant Garamond',serif;font-size:1rem;letter-spacing:0.06em;border:1px solid var(--brown);cursor:pointer;transition:all 0.3s}
+.btn-ghost:hover{background:var(--brown);color:var(--cream)}
+
+#particles{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+.particle{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(176,122,114,0.3);animation:float linear infinite}
+.petal{position:absolute;width:8px;height:5px;background:rgba(176,122,114,0.25);border-radius:50% 0 50% 0;animation:petal-fall linear infinite}
+@keyframes float{0%{transform:translateY(100vh) translateX(0) rotate(0deg);opacity:0}10%{opacity:1}90%{opacity:0.5}100%{transform:translateY(-100px) translateX(40px) rotate(360deg);opacity:0}}
+@keyframes petal-fall{0%{transform:translateY(-20px) translateX(0) rotate(0deg);opacity:0}10%{opacity:0.6}90%{opacity:0.2}100%{transform:translateY(100vh) translateX(60px) rotate(180deg);opacity:0}}
+
+section{position:relative;z-index:2}
+.section-base{padding:5rem 5vw;background:var(--aged);position:relative;overflow:hidden}
+.section-base::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;opacity:0.5}
+.section-base.alt{background:var(--cream)}
+.section-header{text-align:center;margin-bottom:3rem;position:relative}
+.section-number{font-family:'Caveat',cursive;font-size:1rem;color:var(--rose);display:block;margin-bottom:0.5rem}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:400;color:var(--ink);line-height:1.1}
+.section-title em{font-style:italic;color:var(--rose)}
+.section-subtitle{font-family:'Inter',sans-serif;font-size:0.9rem;color:var(--brown);margin-top:0.8rem;line-height:1.7;max-width:520px;margin-left:auto;margin-right:auto}
+
+/* FULL-WIDTH BANNER IMAGE */
+.banner-img{
+  width:100%;height:420px;position:relative;overflow:hidden;
+}
+.banner-img img{width:100%;height:100%;object-fit:cover;display:block;filter:sepia(0.35) contrast(1.05) brightness(0.88)}
+.banner-img::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(248,244,238,0.25) 0%,rgba(44,38,35,0.4) 100%);
+}
+.banner-text{
+  position:absolute;bottom:3rem;left:50%;transform:translateX(-50%);
+  text-align:center;z-index:2;width:90%;
+}
+.banner-text h2{font-family:'Cormorant Garamond',serif;font-size:2.5rem;color:var(--cream);font-weight:300;font-style:italic;text-shadow:0 2px 12px rgba(44,38,35,0.5)}
+.banner-text p{font-family:'Caveat',cursive;font-size:1rem;color:var(--blush);margin-top:0.5rem}
+
+/* PRODUCTS GRID */
+.products-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:2rem;max-width:1100px;margin:0 auto}
+
+/* OPENING BOOK */
+.book-opening{display:flex;align-items:center;justify-content:center;padding:6rem 5vw;background:linear-gradient(180deg,var(--cream) 0%,var(--aged) 100%);position:relative;overflow:hidden}
+.book-cover{width:300px;background:var(--brown);padding:3rem 2rem;text-align:center;box-shadow:0 10px 40px rgba(44,38,35,0.25);position:relative;animation:gentleFloat 4s ease-in-out infinite}
+@keyframes gentleFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-8px) rotate(0deg)}}
+.book-cover-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--cream);font-weight:300;line-height:1.3}
+.book-cover-sub{font-family:'Caveat',cursive;font-size:0.9rem;color:var(--blush);margin-top:0.8rem}
+.book-cover::before{content:'';position:absolute;inset:12px;border:1px solid rgba(216,193,160,0.3);pointer-events:none}
+.book-ornament{color:var(--beige);font-size:1.5rem;margin:1rem 0;display:block;letter-spacing:0.2em}
+
+/* ATMOSPHERE SECTION — image + text side by side */
+.atmosphere{display:grid;grid-template-columns:1fr 1fr;min-height:480px;position:relative;overflow:hidden}
+.atmosphere-img{position:relative;overflow:hidden}
+.atmosphere-img img{width:100%;height:100%;object-fit:cover;display:block;filter:sepia(0.3) brightness(0.88)}
+.atmosphere-img::after{content:'';position:absolute;inset:0;background:rgba(44,38,35,0.15)}
+.atmosphere-text{background:var(--aged);padding:4rem 3.5rem;display:flex;flex-direction:column;justify-content:center}
+.atmosphere-text blockquote{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:300;font-style:italic;color:var(--ink);line-height:1.5;border-left:3px solid var(--rose);padding-left:1.5rem;margin-bottom:1.5rem}
+.atmosphere-text p{font-family:'Inter',sans-serif;font-size:0.88rem;color:var(--brown);line-height:1.8}
+
+/* JOURNEY */
+.journey-wrap{max-width:900px;margin:0 auto;position:relative}
+.journey-line{position:absolute;left:50%;top:0;bottom:0;width:1px;background:repeating-linear-gradient(180deg,var(--beige) 0,var(--beige) 6px,transparent 6px,transparent 12px);transform:translateX(-50%)}
+.journey-step{display:flex;gap:2rem;align-items:flex-start;margin-bottom:3.5rem;position:relative}
+.journey-step:nth-child(even){flex-direction:row-reverse}
+.step-paper{flex:1;background:#f5efe3;padding:1.8rem;box-shadow:0 3px 15px var(--shadow);border:1px solid rgba(139,106,78,0.12);position:relative;transition:transform 0.3s}
+.step-paper:hover{transform:translateY(-4px) rotate(0.3deg)}
+.step-paper-note{position:absolute;top:-12px;right:16px;font-family:'Caveat',cursive;font-size:0.85rem;color:var(--rose);background:var(--cream);padding:2px 8px;border:1px solid rgba(176,122,114,0.3)}
+.step-img{width:100%;height:130px;object-fit:cover;margin-bottom:1rem;display:block;filter:sepia(0.2) brightness(0.92);border:1px solid rgba(139,106,78,0.1)}
+.step-number{width:48px;height:48px;background:var(--rose);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--cream);flex-shrink:0;align-self:center;box-shadow:0 2px 10px rgba(176,122,114,0.4);position:relative;z-index:3}
+.step-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--ink);font-weight:500;margin-bottom:0.5rem}
+.step-desc{font-family:'Inter',sans-serif;font-size:0.85rem;color:var(--brown);line-height:1.7}
+
+/* TESTIMONIALS */
+.testimonials-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem;max-width:1000px;margin:0 auto}
+.memory-card{background:#f5efe3;padding:0 0 1.5rem;border:1px solid rgba(139,106,78,0.12);position:relative;box-shadow:0 3px 12px var(--shadow);transition:transform 0.3s;overflow:hidden}
+.memory-card:hover{transform:rotate(0deg) translateY(-5px)}
+.memory-card:nth-child(1){transform:rotate(-1.5deg)}
+.memory-card:nth-child(2){transform:rotate(1deg)}
+.memory-card:nth-child(3){transform:rotate(-0.5deg)}
+.memory-card-img{width:100%;height:150px;object-fit:cover;display:block;filter:sepia(0.25) brightness(0.9)}
+.memory-card-body{padding:1.2rem 1.5rem 0}
+.memory-quote{font-family:'Cormorant Garamond',serif;font-size:1rem;font-style:italic;color:var(--ink);line-height:1.7}
+.memory-quote::before{content:'\201C';font-size:2.5rem;color:var(--rose);line-height:0;vertical-align:-0.7rem;margin-right:4px;font-family:'Cormorant Garamond',serif}
+.memory-author{font-family:'Caveat',cursive;font-size:0.9rem;color:var(--rose);margin-top:1rem;display:flex;align-items:center;gap:0.5rem}
+.memory-tape{position:absolute;top:-10px;left:50%;transform:translateX(-50%) rotate(-1deg);width:60px;height:18px;background:rgba(216,193,160,0.6);border:1px solid rgba(139,106,78,0.15);border-radius:2px}
+
+/* CONTACT */
+.contact-wrap{max-width:620px;margin:0 auto;text-align:center}
+.whatsapp-btn{display:inline-flex;align-items:center;gap:0.8rem;background:#2d5a3d;color:#f5efe3;padding:1rem 2.5rem;font-family:'Cormorant Garamond',serif;font-size:1.1rem;border:none;cursor:pointer;margin-top:1.5rem;transition:all 0.3s;letter-spacing:0.04em;text-decoration:none}
+.whatsapp-btn:hover{background:#1e3d2a;transform:translateY(-3px);box-shadow:0 8px 25px rgba(45,90,61,0.3)}
+.contact-note{font-family:'Caveat',cursive;font-size:1rem;color:var(--brown);margin-top:1.5rem;line-height:1.6;background:#f5efe3;padding:1.2rem;border:1px dashed rgba(139,106,78,0.3);display:inline-block;transform:rotate(-0.5deg)}
+
+/* INK-REVEAL HEADINGS — handwritten ink sweeping across on scroll-reveal */
+.section-title,.banner-text h2,.book-cover-title{display:inline-block;clip-path:inset(0 101% 0 0)}
+.reveal.visible .section-title,.reveal.visible .banner-text h2,.reveal.visible .book-cover-title{animation:inkReveal 1.15s cubic-bezier(0.65,0,0.35,1) 0.18s both}
+
+/* PAPER-TEAR DIVIDER — torn-edge transition between major sections */
+.paper-tear{position:relative;height:34px;width:100%;margin-top:-1px;z-index:3;pointer-events:none}
+.paper-tear svg{display:block;width:100%;height:100%}
+.paper-tear.tear-up{transform:translateY(1px) rotate(180deg)}
+
+/* JOURNAL CARD — tactile paper depth + page-lift + pinned image */
+.journal-card{
+  background:#f5efe3;border:1px solid rgba(139,106,78,0.15);position:relative;padding:0 0 1.5rem 0;
+  box-shadow:0 1px 0 #fff,0 2px 4px rgba(44,38,35,0.08),0 10px 24px rgba(44,38,35,0.1);
+  transition:transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94),box-shadow 0.45s cubic-bezier(0.25,0.46,0.45,0.94);
+  cursor:pointer;overflow:hidden;transform-origin:bottom center;
+}
+.journal-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--beige),var(--rose),var(--beige));z-index:2}
+.journal-card::after{content:'';position:absolute;left:40px;top:0;bottom:0;width:1px;background:rgba(176,122,114,0.2)}
+.journal-card:hover{
+  transform:translateY(-10px) rotate(-0.6deg) scale(1.015);
+  box-shadow:0 1px 0 #fff,0 4px 10px rgba(44,38,35,0.12),0 28px 50px rgba(44,38,35,0.22),0 6px 16px rgba(44,38,35,0.12);
+}
+.card-img-wrap{width:100%;height:200px;overflow:hidden;position:relative}
+.card-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;filter:sepia(0.2) contrast(1.05) brightness(0.95);transition:transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94)}
+.journal-card:hover .card-img-wrap img{transform:scale(1.08) rotate(-0.5deg)}
+.card-img-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(245,239,227,0.7) 100%)}
+.card-pin{position:absolute;top:10px;left:50%;transform:translateX(-50%) rotate(-3deg);width:34px;height:14px;background:rgba(216,193,160,0.75);border:1px solid rgba(139,106,78,0.25);z-index:3;box-shadow:0 2px 5px rgba(44,38,35,0.2);transition:transform 0.4s}
+.journal-card:hover .card-pin{transform:translateX(-50%) rotate(2deg) translateY(-1px)}
+.card-body{padding:1rem 1.5rem 0}
+.card-category{font-family:'Caveat',cursive;font-size:0.85rem;color:var(--rose);margin-bottom:0.4rem}
+.card-name{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500;color:var(--ink);line-height:1.2}
+.card-desc{font-family:'Inter',sans-serif;font-size:0.82rem;color:var(--brown);margin-top:0.6rem;line-height:1.6}
+.card-price{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--rose);margin-top:0.8rem;font-weight:500}
+.card-corner{position:absolute;bottom:0;right:0;width:24px;height:24px;background:var(--beige);clip-path:polygon(100% 0,100% 100%,0 100%);transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);box-shadow:-2px -2px 6px rgba(44,38,35,0.15) inset}
+.journal-card:hover .card-corner{transform:scale(1.35) translate(1px,1px)}
+
+/* MEMORY WALL — hanging polaroids on a string, replacing the old gallery strip */
+.memory-wall{position:relative;padding:5.5rem 5vw 6rem;background:var(--cream);overflow:hidden}
+.memory-wall::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;opacity:0.6}
+.wall-string{position:absolute;left:4vw;right:4vw;top:11.5rem;height:2px;background:repeating-linear-gradient(90deg,rgba(139,106,78,0.55) 0,rgba(139,106,78,0.55) 6px,transparent 6px,transparent 10px);z-index:1}
+.wall-string::before,.wall-string::after{content:'';position:absolute;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--brown);box-shadow:0 1px 3px rgba(44,38,35,0.4)}
+.wall-string::before{left:-4px}
+.wall-string::after{right:-4px}
+.wall-grid{position:relative;display:flex;flex-wrap:wrap;justify-content:center;gap:2.6rem 2.2rem;max-width:1180px;margin:0 auto;z-index:2}
+.wall-piece{position:relative;cursor:pointer}
+.wall-clip{position:absolute;top:-15px;left:50%;transform:translateX(-50%) rotate(var(--cr,-4deg));width:18px;height:26px;z-index:5;filter:drop-shadow(0 2px 3px rgba(44,38,35,0.35))}
+.wall-photo{
+  background:#fff;padding:9px 9px 14px;width:150px;
+  box-shadow:0 6px 16px rgba(44,38,35,0.22),0 2px 4px rgba(44,38,35,0.12);
+  transform:rotate(var(--pr,0deg));transition:transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94),box-shadow 0.4s;
+}
+.wall-photo img{width:100%;aspect-ratio:1;object-fit:cover;display:block;filter:sepia(0.25) contrast(1.05) brightness(0.92)}
+.wall-piece:hover .wall-photo{transform:rotate(0deg) translateY(-8px) scale(1.05);box-shadow:0 18px 34px rgba(44,38,35,0.3)}
+.wall-cap{font-family:'Caveat',cursive;font-size:0.82rem;color:var(--brown);text-align:center;margin-top:6px}
+.wall-piece.is-note .wall-photo{background:#f0e8d4;padding:1.1rem 0.9rem;display:flex;align-items:center;justify-content:center;text-align:center;font-family:'Caveat',cursive;font-size:0.95rem;color:var(--ink);line-height:1.5;min-height:150px}
+.wall-thread{position:absolute;top:-15px;left:50%;width:1px;height:15px;background:rgba(139,106,78,0.5);transform:translateX(-50%);z-index:4}
+
+/* BEHIND EVERY GIFT — premium artisanal crafting journey */
+.behind-section{padding:6rem 5vw 5.5rem;background:var(--aged);position:relative;overflow:hidden}
+.behind-intro{text-align:center;max-width:640px;margin:0 auto 4rem}
+.behind-rail{position:relative;max-width:1080px;margin:0 auto}
+.behind-rail-line{position:absolute;top:0;bottom:0;left:24px;width:1px;background:repeating-linear-gradient(180deg,var(--beige) 0,var(--beige) 6px,transparent 6px,transparent 13px)}
+.behind-row{display:grid;grid-template-columns:50px 1fr;gap:1.6rem;margin-bottom:2.6rem;position:relative}
+.behind-dot{width:50px;height:50px;border-radius:50%;background:var(--cream);border:2px solid var(--rose);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--rose);position:relative;z-index:2;box-shadow:0 3px 10px rgba(176,122,114,0.25);flex-shrink:0}
+.behind-card{
+  background:#f5efe3;border:1px solid rgba(139,106,78,0.14);position:relative;
+  display:grid;grid-template-columns:160px 1fr;overflow:hidden;
+  box-shadow:0 3px 8px rgba(44,38,35,0.08),0 14px 30px rgba(44,38,35,0.1);
+  transition:transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94),box-shadow 0.4s;
+}
+.behind-card:hover{transform:translateY(-5px);box-shadow:0 6px 16px rgba(44,38,35,0.12),0 22px 40px rgba(44,38,35,0.16)}
+.behind-card-img{position:relative;overflow:hidden;min-height:150px}
+.behind-card-img img{width:100%;height:100%;object-fit:cover;display:block;filter:sepia(0.25) brightness(0.9);transition:transform 0.6s ease}
+.behind-card:hover .behind-card-img img{transform:scale(1.07)}
+.behind-card-body{padding:1.4rem 1.7rem}
+.behind-tag{font-family:'Caveat',cursive;font-size:0.85rem;color:var(--rose);margin-bottom:0.3rem}
+.behind-title{font-family:'Cormorant Garamond',serif;font-size:1.45rem;color:var(--ink);font-weight:500;margin-bottom:0.45rem}
+.behind-desc{font-family:'Inter',sans-serif;font-size:0.84rem;color:var(--brown);line-height:1.65}
+
+footer{background:var(--ink);color:var(--cream);padding:3rem 5vw;text-align:center;position:relative;z-index:2}
+.footer-brand{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;margin-bottom:0.5rem}
+.footer-tag{font-family:'Caveat',cursive;font-size:0.95rem;color:var(--blush);margin-bottom:2rem}
+.footer-links{display:flex;gap:2rem;justify-content:center;list-style:none;margin-bottom:1.5rem;flex-wrap:wrap}
+.footer-links a{font-size:0.8rem;color:var(--beige);text-decoration:none;letter-spacing:0.1em;text-transform:uppercase;transition:color 0.3s}
+.footer-links a:hover{color:var(--blush)}
+.footer-copy{font-size:0.78rem;color:rgba(216,193,160,0.6);font-family:'Inter',sans-serif}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.8s ease,transform 0.8s ease}
+.reveal.visible{opacity:1;transform:none}
+.reveal-delay-1{transition-delay:0.1s}
+.reveal-delay-2{transition-delay:0.2s}
+.reveal-delay-3{transition-delay:0.3s}
+
+@media(max-width:900px){
+  .atmosphere{grid-template-columns:1fr}
+  .atmosphere-img{height:300px}
+  nav{padding:1rem}
+  .nav-links{display:none}
+  .scrapbook{width:90vw}
+  .brand-label{font-size:1.8rem}
+  .polaroid-1,.polaroid-2,.polaroid-3,.envelope.env-1,.flower-cluster,.ribbon-1,.ribbon-2,.wax-seal.seal-1,.sticky-note.note-1,.paperclip.clip-1{display:none}
+  .section-title{font-size:2rem}
+  .journey-step{flex-direction:column!important}
+  .journey-line{display:none}
+  .gallery-strip{grid-template-columns:repeat(3,1fr);height:200px}
+  .gallery-strip-item:nth-child(4),.gallery-strip-item:nth-child(5){display:none}
+  .banner-img{height:280px}
+  .banner-text h2{font-size:1.8rem}
+}
+</style>
+</head>
+<body>
+
+<div id="particles"></div>
+<div class="scroll-bookmark" id="scrollBookmark"></div>
+
+<button class="music-toggle" id="musicToggle" aria-label="Toggle ambient music" title="Soft ambient music">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" id="musicIconNote"><path d="M9 18V5l12-2v13" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+  <span class="music-bars" id="musicBars" style="display:none"><span class="bar"></span><span class="bar"></span><span class="bar"></span></span>
+</button>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">Mr Moments Remind</div>
+  <ul class="nav-links">
+    <li><a href="#gifts">Gifts</a></li>
+    <li><a href="#scrapbooks">Scrapbooks</a></li>
+    <li><a href="#hampers">Hampers</a></li>
+    <li><a href="#behind">Our Craft</a></li>
+    <li><a href="#memories">Stories</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Begin Your Story</button>
+  <button class="nav-burger" id="navBurger" aria-label="Open menu"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="mobile-menu-backdrop" id="menuBackdrop"></div>
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-tag">✦ Not Just Gifts. Emotions Wrapped In Art.</div>
+  <ul class="mobile-menu-links">
+    <li><a href="#gifts">Gifts</a></li>
+    <li><a href="#scrapbooks">Scrapbooks</a></li>
+    <li><a href="#hampers">Hampers</a></li>
+    <li><a href="#behind">Our Craft</a></li>
+    <li><a href="#memories">Stories</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'});closeMobileMenu()">Begin Your Story</button>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="desk" id="desk">
+    <div class="desk-parallax" id="layerFar" data-depth="0.35">
+      <div class="desk-item ribbon ribbon-1"></div>
+      <div class="desk-item ribbon ribbon-2"></div>
+      <div class="desk-item paperclip clip-1"></div>
+      <!-- DRIED FLOWERS SVG -->
+      <div class="desk-item flower-cluster flower-1">
+        <svg width="80" height="100" viewBox="0 0 80 100" fill="none">
+          <line x1="40" y1="100" x2="35" y2="20" stroke="#8B6A4E" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="35" y1="20" x2="20" y2="5" stroke="#8B6A4E" stroke-width="1" stroke-linecap="round"/>
+          <line x1="35" y1="20" x2="52" y2="8" stroke="#8B6A4E" stroke-width="1" stroke-linecap="round"/>
+          <ellipse cx="20" cy="5" rx="7" ry="4" fill="#B07A72" opacity="0.7" transform="rotate(-30 20 5)"/>
+          <ellipse cx="52" cy="8" rx="6" ry="3.5" fill="#D8C1A0" opacity="0.7" transform="rotate(20 52 8)"/>
+          <line x1="38" y1="60" x2="28" y2="50" stroke="#8B6A4E" stroke-width="0.8" stroke-linecap="round"/>
+          <ellipse cx="26" cy="48" rx="8" ry="3" fill="#B07A72" opacity="0.5" transform="rotate(-45 26 48)"/>
+          <line x1="38" y1="45" x2="52" y2="38" stroke="#8B6A4E" stroke-width="0.8" stroke-linecap="round"/>
+          <ellipse cx="54" cy="36" rx="7" ry="2.5" fill="#E9D1CB" opacity="0.6" transform="rotate(30 54 36)"/>
+        </svg>
+      </div>
+      <div class="desk-item flower-cluster flower-2">
+        <svg width="70" height="90" viewBox="0 0 70 90" fill="none">
+          <line x1="35" y1="90" x2="38" y2="15" stroke="#8B6A4E" stroke-width="1.5" stroke-linecap="round"/>
+          <ellipse cx="38" cy="12" rx="6" ry="8" fill="#B07A72" opacity="0.65"/>
+          <line x1="36" y1="55" x2="18" y2="42" stroke="#8B6A4E" stroke-width="1" stroke-linecap="round"/>
+          <ellipse cx="15" cy="40" rx="8" ry="3" fill="#D8C1A0" opacity="0.6" transform="rotate(-50 15 40)"/>
+          <line x1="37" y1="40" x2="55" y2="30" stroke="#8B6A4E" stroke-width="1" stroke-linecap="round"/>
+          <ellipse cx="58" cy="28" rx="7" ry="2.5" fill="#E9D1CB" opacity="0.7" transform="rotate(40 58 28)"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="desk-parallax" id="layerNear" data-depth="0.85">
+      <div class="desk-item polaroid polaroid-1">
+        <div class="polaroid-img"><img src="https://images.unsplash.com/photo-1606522754091-a3bbf9ad4cb3?w=200&auto=format&fit=crop&q=80" alt="dried flowers gift"></div>
+        <div class="polaroid-caption">our story</div>
+      </div>
+      <div class="desk-item polaroid polaroid-2">
+        <div class="polaroid-img"><img src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=200&auto=format&fit=crop&q=80" alt="handwritten letter"></div>
+        <div class="polaroid-caption">with love</div>
+      </div>
+      <div class="desk-item polaroid polaroid-3">
+        <div class="polaroid-img"><img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&auto=format&fit=crop&q=80" alt="handmade gift box"></div>
+        <div class="polaroid-caption">handmade</div>
+      </div>
+      <div class="desk-item envelope env-1"><div class="env-seal">✦</div></div>
+      <div class="desk-item wax-seal seal-1">M</div>
+      <div class="desk-item sticky-note note-1">every gift is a story waiting to be told ✦</div>
+    </div>
+
+    <!-- SCRAPBOOK -->
+    <div class="scrapbook" id="scrapbook">
+      <div class="scrapbook-spine"></div>
+      <div class="scrapbook-tape"></div>
+      <div class="scrapbook-body">
+        <div class="card-category" style="font-size:0.9rem">✦ Handcrafted Gifts &amp; Memories</div>
+        <div class="scrapbook-divider"></div>
+        <h1 class="brand-label">Mr Moments<br><em>Remind</em></h1>
+        <p class="tagline-label">"Not Just Gifts.<br>Emotions Wrapped In Art."</p>
+        <div class="scrapbook-divider"></div>
+        <p style="font-family:'Inter',sans-serif;font-size:0.85rem;color:var(--brown);line-height:1.7;margin-bottom:1.5rem">
+          Each piece we create holds within it a thousand tiny decisions — a ribbon placed just so, a petal pressed with intention, a word written by hand at midnight. We don't make gifts. We make <em style="font-family:'Cormorant Garamond',serif">memories you can hold</em>.
+        </p>
+        <div class="hero-cta">
+          <button class="btn-primary" onclick="document.getElementById('gifts').scrollIntoView({behavior:'smooth'})">Explore Our Gifts</button>
+          <button class="btn-ghost" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Share Your Story</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OPENING BOOK -->
+<section class="book-opening reveal" id="opening">
+  <div style="text-align:center;max-width:500px">
+    <div class="book-cover">
+      <span class="book-ornament">✦ ✦ ✦</span>
+      <div class="book-cover-title">A Memory Book<br>Opens For You</div>
+      <div class="book-cover-sub">Turn the pages. Discover emotions wrapped in art.</div>
+      <span class="book-ornament">— ♥ —</span>
+    </div>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--ink);margin-top:2.5rem;line-height:1.8;font-style:italic">
+      "Every gift we create begins the same way — with your story. We listen to it, hold it carefully, and transform it into something tangible, precious, and yours forever."
+    </p>
+  </div>
+</section>
+
+<!-- ATMOSPHERE: IMAGE + QUOTE -->
+<div class="atmosphere reveal">
+  <div class="atmosphere-img">
+    <img src="https://images.unsplash.com/photo-1616628188859-7a11abb6fcc9?w=900&auto=format&fit=crop&q=80" alt="handmade scrapbook craft workspace" loading="lazy">
+  </div>
+  <div class="atmosphere-text">
+    <blockquote>"The most precious things in life are not bought — they are made by hand, with love, with time, with intention."</blockquote>
+    <p>At Mr Moments Remind, we believe a gift should feel like a held breath — something so personal, so considered, that when the person receives it, they feel truly seen. Every fold, every petal, every word is placed with that feeling in mind.</p>
+    <div style="margin-top:1.5rem">
+      <button class="btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Begin Your Story</button>
+    </div>
+  </div>
+</div>
+
+<!-- PERSONALIZED GIFTS -->
+<section class="section-base alt" id="gifts">
+  <div class="section-header reveal">
+    <span class="section-number">~ Page One ~</span>
+    <h2 class="section-title">Personalized <em>Gifts</em></h2>
+    <p class="section-subtitle">Each gift is uniquely designed around your relationship, your memories, your love language.</p>
+  </div>
+  <div class="products-grid">
+    <div class="journal-card reveal reveal-delay-1">
+      <div class="card-corner"></div>
+      <div class="card-pin"></div>
+      <div class="card-img-wrap">
+        <img src="https://images.unsplash.com/photo-1607344645866-009c320b63e0?w=600&auto=format&fit=crop&q=80" alt="love letter set handmade" loading="lazy">
+      </div>
+      <div class="card-body">
+        <div class="card-category">Memory Cards</div>
+        <div class="card-name">Love Letter Set</div>
+        <div class="card-desc">Handwritten on aged paper with dried florals, wax seal &amp; a personal message in calligraphy.</div>
+        <div class="card-price">From ₹799</div>
+      </div>
+    </div>
+    <div class="journal-card reveal reveal-delay-2">
+      <div class="card-corner"></div>
+      <div class="card-pin"></div>
+      <div class="card-img-wrap">
+        <img src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=600&auto=format&fit=crop&q=80" alt="memory treasure box" loading="lazy">
+      </div>
+      <div class="card-body">
+        <div class="card-category">Keepsake Box</div>
+        <div class="card-name">Memory Treasure Box</div>
+        <div class="card-desc">A handcrafted wooden box filled with your chosen mementos, photos, and personalised notes.</div>
+        <div class="card-price">From ₹1,299</div>
+      </div>
+    </div>
+    <div class="journal-card reveal reveal-delay-3">
+      <div class="card-corner"></div>
+      <div class="card-pin"></div>
+      <div class="card-img-wrap">
+        <img src="https://images.unsplash.com/photo-1631423020277-ee28d5912971?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGRyeSUyMGZsb3dlciUyMGZyYW1lfGVufDB8fDB8fHww?w=600&auto=format&fit=crop&q=80" alt="pressed dried flower frame" loading="lazy">
+      </div>
+      <div class="card-body">
+        <div class="card-category">Dried Florals</div>
+        <div class="card-name">Pressed Flower Frame</div>
+        <div class="card-desc">Real dried flowers pressed and framed with your special date and names handwritten beneath.</div>
+        <div class="card-price">From ₹1,099</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FULL WIDTH BANNER -->
+<div class="banner-img reveal">
+  <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=1600&auto=format&fit=crop&q=80" alt="handmade gifts craft table" loading="lazy">
+  <div class="banner-text">
+    <h2>"Each gift begins with a story only you can tell."</h2>
+    <p>~ handmade with love, every single time ~</p>
+  </div>
+</div>
+
+<!-- EXPLOSION BOXES -->
+<section class="section-base" id="boxes">
+  <div class="section-header reveal">
+    <span class="section-number">~ Page Two ~</span>
+    <h2 class="section-title">Explosion <em>Boxes</em></h2>
+    <p class="section-subtitle">Open it — and watch a cascade of memories bloom outward, layer by beautiful layer.</p>
+  </div>
+  <div class="products-grid">
+    <div class="journal-card reveal reveal-delay-1">
+      <div class="card-corner"></div>
+      <div class="card-pin"></div>
+      <div class="card-img-wrap">
+        <img src="https://images.unsplash.com/photo-1582552938357-32b906df40cb?w=600&auto=format&fit=crop&q=80" alt="anniversary explosion box" loading="lazy">
+      </div>
+      <div class="card-body">
+        <div class="card-category">Anniversary</div>
+        <div class="card-name">Our Story Box</div>
+        <div class="card-desc">Six layered tiers, each revealing a chapter of your love story in miniature scrapbook form.</div>
+        <div class="card-price">From ₹2,499</div>
+      </div>
+    </div>
+    <div class="journal-card reveal reveal-delay-2">
+      <div class="card-corner"></div>
+      <div class="card-pin"></div>
+      <div class="card-img-wrap">
+        <img src="https://images.unsplash.com/photo-1558636508-e0db3814bd1d?w=600&auto=format&fit=crop&q=80" alt="birthday gift box" loading="lazy">
+      </div>
+      <div class="card-body">
+        <div class="card-category">Birthday</div>
+        <div class="card-name">Birthday Bloom Box</div>
+        <div class="card-desc">A surprise inside a surprise — photos, wishes, and handcrafted mementos burst open with joy.</div>
+        <div class="card-price">From ₹1,899</div>
+      </div>
+    </div>
+    <div class="journal-card reveal reveal-delay-3">
+      <div class="card-corner"></div>
+      <div class="card-pin"></div>
+      <div class="card-img-wrap">
+        <img src="https://images.unsplash.com/photo-1512909006721-3d6018887383?w=600&auto=format&fit=crop&q=80" alt="friendship memory box" loading="lazy">
+      </div>
+      <div class="card-body">
+        <div class="card-category">Friendship</div>
+        <div class="card-name">Best Memories Box</div>
+        <div class="card-desc">All the inside jokes, shared moments, and little-known facts about your friendship, beautifully crafted.</div>
+        <div class="card-price">From ₹1,699</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCRAPBOOKS -->
+<section class="section-base alt" id="scrapbooks">
+  <div class="section-header reveal">
+    <span class="section-number">~ Page Three ~</span>
+    <h2 class="section-title">Handmade <em>Scrapbooks</em></h2>
+    <p class="section-subtitle">A scrapbook is a lifetime in your hands. Every page, a memory. Every corner, a feeling.</p>
+  </div>
+  <div class="products-grid">
+    <div class="journal-card reveal reveal-delay-1">
+      <div class="card-corner"></div>
+      <div class="card-pin"></div>
+      <div class="card-img-wrap">
+        <img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=600&auto=format&fit=crop&q=80" alt="couples scrapbook" loading="lazy">
+      </div>
+      <div class="card-body">
+        <div class="card-category">Couples</div>
+        <div class="card-name">Our Journey Book</div>
+        <div class="card-desc">30 handcrafted pages documenting your relationship timeline with photos, tickets, and love notes.</div>
+        <div class="card-price">From ₹3,499</div>
+      </div>
+    </div>
+    <div class="journal-card reveal reveal-delay-2">
+      <div class="card-corner"></div>
+      <div class="card-pin"></div>
+      <div class="card-img-wrap">
+        <img src="https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=600&auto=format&fit=crop&q=80" alt="baby memory scrapbook" loading="lazy">
+      </div>
+      <div class="card-body">
+        <div class="card-category">Baby &amp; Family</div>
+        <div class="card-name">Little One's Story</div>
+        <div class="card-desc">Baby's first year preserved in a premium handcrafted book of milestones, footprints, and moments.</div>
+        <div class="card-price">From ₹4,299</div>
+      </div>
+    </div>
+    <div class="journal-card reveal reveal-delay-3">
+      <div class="card-corner"></div>
+      <div class="card-pin"></div>
+      <div class="card-img-wrap">
+        <img src="https://plus.unsplash.com/premium_photo-1698117061346-821cd64a4803?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8bWVtb3J5JTIwYm94fGVufDB8fDB8fHww?w=600&auto=format&fit=crop&q=80" alt="graduation memory book" loading="lazy">
+      </div>
+      <div class="card-body">
+        <div class="card-category">Graduation</div>
+        <div class="card-name">Chapter Complete</div>
+        <div class="card-desc">A tribute to years of effort — messages from loved ones, achievements, and hopes for the next chapter.</div>
+        <div class="card-price">From ₹2,999</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GIFT HAMPERS -->
+<section class="section-base" id="hampers">
+  <div class="section-header reveal">
+    <span class="section-number">~ Page Four ~</span>
+    <h2 class="section-title">Curated <em>Gift Hampers</em></h2>
+    <p class="section-subtitle">When one beautiful thing isn't enough — we bundle warmth, art, and care into a single stunning collection.</p>
+  </div>
+  <div class="products-grid">
+    <div class="journal-card reveal reveal-delay-1">
+      <div class="card-corner"></div>
+      <div class="card-pin"></div>
+      <div class="card-img-wrap">
+        <img src="https://images.unsplash.com/photo-1607344645866-009c320b63e0?w=600&auto=format&fit=crop&q=80" alt="premium gift hamper" loading="lazy">
+      </div>
+      <div class="card-body">
+        <div class="card-category">Premium Hamper</div>
+        <div class="card-name">The Whole Heart</div>
+        <div class="card-desc">Scrapbook + explosion box + pressed flower frame + handwritten letter + personalized candle.</div>
+        <div class="card-price">From ₹5,999</div>
+      </div>
+    </div>
+    <div class="journal-card reveal reveal-delay-2">
+      <div class="card-corner"></div>
+      <div class="card-pin"></div>
+      <div class="card-img-wrap">
+        <img src="https://images.unsplash.com/photo-1518895312237-a9e23508077d?w=600&auto=format&fit=crop&q=80" alt="romantic gift hamper" loading="lazy">
+      </div>
+      <div class="card-body">
+        <div class="card-category">Romantic</div>
+        <div class="card-name">In Full Bloom</div>
+        <div class="card-desc">Dried floral arrangement + love letter set + custom polaroid prints + wax seal stationery.</div>
+        <div class="card-price">From ₹3,799</div>
+      </div>
+    </div>
+    <div class="journal-card reveal reveal-delay-3">
+      <div class="card-corner"></div>
+      <div class="card-pin"></div>
+      <div class="card-img-wrap">
+        <img src="https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?w=600&auto=format&fit=crop&q=80" alt="celebration gift hamper" loading="lazy">
+      </div>
+      <div class="card-body">
+        <div class="card-category">Celebration</div>
+        <div class="card-name">Golden Moments</div>
+        <div class="card-desc">Mini scrapbook + memory box + personalised birthday book + printed memories in premium frames.</div>
+        <div class="card-price">From ₹4,499</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MEMORY WALL -->
+<div class="paper-tear"><svg viewBox="0 0 1200 34" preserveAspectRatio="none"><path d="M0,34 L0,12 Q20,2 40,11 T80,10 T120,13 T160,8 T200,12 T240,9 T280,13 T320,7 T360,12 T400,9 T440,13 T480,8 T520,11 T560,9 T600,13 T640,8 T680,12 T720,9 T760,13 T800,8 T840,12 T880,9 T920,13 T960,8 T1000,12 T1040,9 T1080,13 T1120,9 T1160,12 T1200,10 L1200,34 Z" fill="var(--cream)"/></svg></div>
+<section class="memory-wall" id="wall">
+  <div class="section-header reveal">
+    <span class="section-number">~ Pinned With Love ~</span>
+    <h2 class="section-title">The Memory <em>Wall</em></h2>
+    <p class="section-subtitle">A corkboard of moments — snapshots and scribbled notes from the gifts we've sent out into the world.</p>
+  </div>
+  <div class="wall-string"></div>
+  <div class="wall-grid reveal">
+    <div class="wall-piece" style="--cr:-5deg;--pr:-3deg">
+      <div class="wall-thread"></div>
+      <svg class="wall-clip" viewBox="0 0 18 26"><rect x="6" y="0" width="6" height="20" rx="3" fill="#8B6A4E"/><rect x="2" y="14" width="14" height="7" rx="3" fill="#8B6A4E"/></svg>
+      <div class="wall-photo"><img src="https://images.unsplash.com/photo-1606522754091-a3bbf9ad4cb3?w=400&auto=format&fit=crop&q=80" alt="handmade gift craft" loading="lazy"></div>
+      <div class="wall-cap">handmade, always</div>
+    </div>
+    <div class="wall-piece" style="--cr:3deg;--pr:2deg">
+      <div class="wall-thread"></div>
+      <svg class="wall-clip" viewBox="0 0 18 26"><rect x="6" y="0" width="6" height="20" rx="3" fill="#8B6A4E"/><rect x="2" y="14" width="14" height="7" rx="3" fill="#8B6A4E"/></svg>
+      <div class="wall-photo"><img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=400&auto=format&fit=crop&q=80" alt="dried flowers keepsake" loading="lazy"></div>
+      <div class="wall-cap">pressed &amp; preserved</div>
+    </div>
+    <div class="wall-piece is-note" style="--cr:-4deg">
+      <div class="wall-thread"></div>
+      <svg class="wall-clip" viewBox="0 0 18 26"><rect x="6" y="0" width="6" height="20" rx="3" fill="#B07A72"/><rect x="2" y="14" width="14" height="7" rx="3" fill="#B07A72"/></svg>
+      <div class="wall-photo">"the box arrived &amp; the whole room smelled like dried roses" ✦</div>
+    </div>
+    <div class="wall-piece" style="--cr:6deg;--pr:4deg">
+      <div class="wall-thread"></div>
+      <svg class="wall-clip" viewBox="0 0 18 26"><rect x="6" y="0" width="6" height="20" rx="3" fill="#8B6A4E"/><rect x="2" y="14" width="14" height="7" rx="3" fill="#8B6A4E"/></svg>
+      <div class="wall-photo"><img src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=400&auto=format&fit=crop&q=80" alt="memory box open" loading="lazy"></div>
+      <div class="wall-cap">opening it, slowly</div>
+    </div>
+    <div class="wall-piece" style="--cr:-3deg;--pr:-2deg">
+      <div class="wall-thread"></div>
+      <svg class="wall-clip" viewBox="0 0 18 26"><rect x="6" y="0" width="6" height="20" rx="3" fill="#8B6A4E"/><rect x="2" y="14" width="14" height="7" rx="3" fill="#8B6A4E"/></svg>
+      <div class="wall-photo"><img src="https://images.unsplash.com/photo-1512909006721-3d6018887383?w=400&auto=format&fit=crop&q=80" alt="gift wrapping ribbons" loading="lazy"></div>
+      <div class="wall-cap">wrapped with care</div>
+    </div>
+    <div class="wall-piece is-note" style="--cr:5deg">
+      <div class="wall-thread"></div>
+      <svg class="wall-clip" viewBox="0 0 18 26"><rect x="6" y="0" width="6" height="20" rx="3" fill="#B07A72"/><rect x="2" y="14" width="14" height="7" rx="3" fill="#B07A72"/></svg>
+      <div class="wall-photo">"she read every page twice before she even looked up" ✦</div>
+    </div>
+    <div class="wall-piece" style="--cr:4deg;--pr:3deg">
+      <div class="wall-thread"></div>
+      <svg class="wall-clip" viewBox="0 0 18 26"><rect x="6" y="0" width="6" height="20" rx="3" fill="#8B6A4E"/><rect x="2" y="14" width="14" height="7" rx="3" fill="#8B6A4E"/></svg>
+      <div class="wall-photo"><img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&auto=format&fit=crop&q=80" alt="wax seal letter" loading="lazy"></div>
+      <div class="wall-cap">sealed with wax</div>
+    </div>
+  </div>
+</section>
+<div class="paper-tear tear-up"><svg viewBox="0 0 1200 34" preserveAspectRatio="none"><path d="M0,34 L0,12 Q20,2 40,11 T80,10 T120,13 T160,8 T200,12 T240,9 T280,13 T320,7 T360,12 T400,9 T440,13 T480,8 T520,11 T560,9 T600,13 T640,8 T680,12 T720,9 T760,13 T800,8 T840,12 T880,9 T920,13 T960,8 T1000,12 T1040,9 T1080,13 T1120,9 T1160,12 T1200,10 L1200,34 Z" fill="var(--cream)"/></svg></div>
+
+
+<!-- CUSTOMER MEMORIES -->
+<section class="section-base alt" id="memories">
+  <div class="section-header reveal">
+    <span class="section-number">~ Their Words ~</span>
+    <h2 class="section-title">Stories Our <em>Customers</em> Tell</h2>
+    <p class="section-subtitle">These aren't reviews. They are memories of the moment they gave — and received — something irreplaceable.</p>
+  </div>
+  <div class="testimonials-grid">
+    <div class="memory-card reveal reveal-delay-1">
+      <div class="memory-tape"></div>
+      <img class="memory-card-img" src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=500&auto=format&fit=crop&q=80" alt="couple receiving gift" loading="lazy">
+      <div class="memory-card-body">
+        <p class="memory-quote">She cried for twenty minutes. I have never seen someone hold a gift so close and not want to let go. It wasn't just beautiful — it felt alive.</p>
+        <div class="memory-author">✦ Aravind K., Chennai</div>
+        <div style="font-family:'Caveat',cursive;font-size:0.8rem;color:var(--brown);margin-top:0.4rem">Anniversary Explosion Box ♥</div>
+      </div>
+    </div>
+    <div class="memory-card reveal reveal-delay-2">
+      <div class="memory-tape"></div>
+      <img class="memory-card-img" src="https://images.unsplash.com/photo-1529634806980-85c3dd6d34ac?w=500&auto=format&fit=crop&q=80" alt="mother daughter gift moment" loading="lazy">
+      <div class="memory-card-body">
+        <p class="memory-quote">My mother hasn't stopped talking about her scrapbook. She told me it's the most precious thing anyone has ever given her in 65 years of her life.</p>
+        <div class="memory-author">✦ Priya S., Bangalore</div>
+        <div style="font-family:'Caveat',cursive;font-size:0.8rem;color:var(--brown);margin-top:0.4rem">Mother's Day Scrapbook ♥</div>
+      </div>
+    </div>
+    <div class="memory-card reveal reveal-delay-3">
+      <div class="memory-tape"></div>
+      <img class="memory-card-img" src="https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=500&auto=format&fit=crop&q=80" alt="anniversary gift unboxing" loading="lazy">
+      <div class="memory-card-body">
+        <p class="memory-quote">I've given and received hundreds of gifts in my life. Nothing — nothing — has come close to what Mr Moments Remind created for our third anniversary.</p>
+        <div class="memory-author">✦ Riya &amp; Kabir, Mumbai</div>
+        <div style="font-family:'Caveat',cursive;font-size:0.8rem;color:var(--brown);margin-top:0.4rem">The Whole Heart Hamper ♥</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ORDER JOURNEY -->
+<section class="section-base" id="journey">
+  <div class="section-header reveal">
+    <span class="section-number">~ How It Works ~</span>
+    <h2 class="section-title">A Handmade <em>Journey</em></h2>
+    <p class="section-subtitle">From the moment you share your story to the moment it arrives — every step is filled with intention.</p>
+  </div>
+  <div class="journey-wrap reveal">
+    <div class="journey-line"></div>
+    <div class="journey-step">
+      <div class="step-paper">
+        <div class="step-paper-note">Step One</div>
+        <img class="step-img" src="https://images.unsplash.com/photo-1517842645767-c639042777db?w=500&auto=format&fit=crop&q=80" alt="sharing your story writing" loading="lazy">
+        <div class="step-title">Share Your Story</div>
+        <div class="step-desc">Tell us about the person. Their laugh, their favourite colour, a memory only you share. The more you tell us, the more deeply personal your gift becomes.</div>
+      </div>
+      <div class="step-number">1</div>
+      <div style="flex:1"></div>
+    </div>
+    <div class="journey-step">
+      <div style="flex:1"></div>
+      <div class="step-number">2</div>
+      <div class="step-paper">
+        <div class="step-paper-note">Step Two</div>
+        <img class="step-img" src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=500&auto=format&fit=crop&q=80" alt="designing with love sketching" loading="lazy">
+        <div class="step-title">We Design With Love</div>
+        <div class="step-desc">Our artisans sketch, plan, and dream up a layout that reflects your story perfectly. Every element is chosen with care — the paper, the ink, the petals, the ribbon.</div>
+      </div>
+    </div>
+    <div class="journey-step">
+      <div class="step-paper">
+        <div class="step-paper-note">Step Three</div>
+        <img class="step-img" src="https://images.unsplash.com/photo-1616628188859-7a11abb6fcc9?w=500&auto=format&fit=crop&q=80" alt="handcrafting scrapbook" loading="lazy">
+        <div class="step-title">Handcrafted Creation</div>
+        <div class="step-desc">Entirely by hand. No machines. No shortcuts. Each fold, paste, and placement is done slowly and deliberately — because that is what makes it real.</div>
+      </div>
+      <div class="step-number">3</div>
+      <div style="flex:1"></div>
+    </div>
+    <div class="journey-step">
+      <div style="flex:1"></div>
+      <div class="step-number">4</div>
+      <div class="step-paper">
+        <div class="step-paper-note">Final Step</div>
+        <img class="step-img" src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&auto=format&fit=crop&q=80" alt="delivered with care packaging" loading="lazy">
+        <div class="step-title">Delivered With Care</div>
+        <div class="step-desc">Wrapped in tissue, sealed in wax, and nestled in our signature keepsake box — your gift arrives exactly as it was meant to: like something precious, arriving home.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section-base alt" id="contact">
+  <div class="contact-wrap reveal">
+    <span class="section-number">~ Begin Here ~</span>
+    <h2 class="section-title" style="margin-bottom:1rem">Begin <em>Your Story</em></h2>
+    <p class="section-subtitle">Every extraordinary gift starts with a conversation. Tell us who you love. We'll take it from there.</p>
+    <a href="https://wa.me/919999999999?text=Hello%20Mr%20Moments%20Remind%2C%20I%20would%20like%20to%20create%20a%20special%20gift..." class="whatsapp-btn" target="_blank">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+      </svg>
+      Chat With Us On WhatsApp
+    </a>
+    <div class="contact-note">
+      ✉️ We respond within a few hours.<br>
+      Orders take 5–10 working days to handcraft.<br>
+      Pan-India delivery available.
+    </div>
+    <div style="margin-top:2.5rem;display:flex;gap:2rem;justify-content:center;flex-wrap:wrap">
+      <div style="text-align:center">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:500;color:var(--rose)">2,400+</div>
+        <div style="font-family:'Caveat',cursive;font-size:0.9rem;color:var(--brown)">Memories Created</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:500;color:var(--rose)">100%</div>
+        <div style="font-family:'Caveat',cursive;font-size:0.9rem;color:var(--brown)">Handmade Always</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:500;color:var(--rose)">4.9★</div>
+        <div style="font-family:'Caveat',cursive;font-size:0.9rem;color:var(--brown)">Average Love Score</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">Mr Moments Remind</div>
+  <div class="footer-tag">"Not Just Gifts. Emotions Wrapped In Art."</div>
+  <ul class="footer-links">
+    <li><a href="#gifts">Gifts</a></li>
+    <li><a href="#scrapbooks">Scrapbooks</a></li>
+    <li><a href="#boxes">Explosion Boxes</a></li>
+    <li><a href="#hampers">Hampers</a></li>
+    <li><a href="#journey">Process</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <p class="footer-copy">Handcrafted with love in India &nbsp;✦&nbsp; © 2025 Mr Moments Remind</p>
+</footer>
+
+<script>
+(function(){
+  const c=document.getElementById('particles');
+  for(let i=0;i<18;i++){
+    const el=document.createElement('div');
+    el.className=Math.random()>0.5?'particle':'petal';
+    el.style.left=Math.random()*100+'vw';
+    el.style.animationDuration=(8+Math.random()*16)+'s';
+    el.style.animationDelay=(-Math.random()*20)+'s';
+    el.style.opacity=0.3+Math.random()*0.4;
+    if(el.classList.contains('petal')){
+      el.style.transform='rotate('+Math.random()*360+'deg)';
+      el.style.background=Math.random()>0.5?'rgba(176,122,114,0.3)':'rgba(216,193,160,0.4)';
+    }
+    c.appendChild(el);
+  }
+})();
+
+const reveals=document.querySelectorAll('.reveal');
+const obs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}});
+},{threshold:0.1});
+reveals.forEach(r=>obs.observe(r));
+
+const desk=document.getElementById('desk');
+const scrapbook=document.getElementById('scrapbook');
+let ticking=false;
+document.addEventListener('mousemove',(e)=>{
+  if(ticking)return;
+  ticking=true;
+  requestAnimationFrame(()=>{
+    const cx=window.innerWidth/2,cy=window.innerHeight/2;
+    const dx=(e.clientX-cx)/cx,dy=(e.clientY-cy)/cy;
+    desk.querySelectorAll('.desk-item').forEach((item,i)=>{
+      const depth=0.5+((i%4)*0.3);
+      const base=
+        item.classList.contains('polaroid-1')?'rotate(6deg)':
+        item.classList.contains('polaroid-2')?'rotate(-8deg)':
+        item.classList.contains('polaroid-3')?'rotate(-5deg)':
+        item.classList.contains('env-1')?'rotate(5deg)':
+        item.classList.contains('seal-1')?'rotate(12deg)':
+        item.classList.contains('note-1')?'rotate(3deg)':'';
+      item.style.transform=base+` translate(${dx*4*depth}px,${dy*3*depth}px)`;
+    });
+    if(scrapbook) scrapbook.style.transform=`rotate(${-1+dx*1.5}deg) translate(${dx*3}px,${dy*2}px)`;
+    ticking=false;
+  });
+});
+</script>
+</body>
+</html>
